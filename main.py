@@ -47,39 +47,13 @@ if __name__ == "__main__":
     cms_data_df = load_cms_data(filename="open_cms_data.root")
     data_df = pd.read_csv('27D_openCMS_data.csv')
 
-    if create_plots:
-        # Plot the original data
-        plot_initial_data(input_data=data_df, num_variables=num_of_variables)
-
-        # Plot correlation matrix between the input variables of the data
-        correlation_plot(data_df)
-
     # Preprocess data
     data_df, train_data, test_data, scaler = preprocess_28D(data_df=data_df, num_variables=num_of_variables, custom_norm=custom_norm)
 
-    if create_plots:
-        # Plot preprocessed data
-        plot_initial_data(input_data=data_df, num_variables=num_of_variables, normalized=True)
-
-    if use_vae:
-        # Run the Variational Autoencoder and obtain the reconstructed data
-        test_data, reconstructed_data = vae.train(variables=num_of_variables, train_data=train_data, test_data=test_data, epochs=epochs, learning_rate=lr)
-        # Plot the reconstructed along with the initial data
-        plot_test_pred_data(test_data, reconstructed_data, num_variables=num_of_variables, vae=True)
-    elif use_sae:
-        # Run the Sparse Autoencoder and obtain the reconstructed data
-        test_data, reconstructed_data = sae.train(variables=num_of_variables, train_data=train_data,
+    # Run the Sparse Autoencoder and obtain the reconstructed data
+    test_data, reconstructed_data = sae.train(variables=num_of_variables, train_data=train_data,
                                                   test_data=test_data, learning_rate=lr, reg_param=reg_param, epochs=epochs, RHO=RHO, l1=l1)
-        # Plot the reconstructed along with the initial data
-        plot_test_pred_data(test_data, reconstructed_data, num_variables=num_of_variables, sae=True)
-    else:
-        # Initialize the Autoencoder
-        standard_ae = ae.Autoencoder(train_data, test_data, num_variables=num_of_variables)
-        # Train the standard Autoencoder and obtain the reconstructions
-        test_data, reconstructed_data = standard_ae.train(test_data, epochs=epochs)
-
-        # Plot the reconstructed along with the initial data
-        plot_test_pred_data(test_data, reconstructed_data, num_variables=num_of_variables)
-
+    # Plot the reconstructed along with the initial data
+    plot_test_pred_data(test_data, reconstructed_data, num_variables=num_of_variables, sae=True)
     # Evaluate the reconstructions of the network based on various metrics
     evaluate_model(y_true=test_data, y_predicted=reconstructed_data)

@@ -178,7 +178,7 @@ def train(variables, train_data, test_data, learning_rate, reg_param, RHO, l1, e
     plt.ylabel('Loss')
     plt.legend()
     plt.savefig('D:\Desktop\GSoC-ATLAS\learning_curves\sae_loss.png')
-    plt.show()
+    #plt.show()
 
     data = torch.tensor(test_data.values, dtype=torch.float)
 
