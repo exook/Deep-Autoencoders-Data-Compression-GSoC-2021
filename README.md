@@ -41,7 +41,7 @@ optional arguments:
 Example:
 
 ```
-python main.py --use_sae True --epochs 30 --num_variables 19 --plot True
+python main.py --use_sae True --epochs 50 --num_variables 19 --plot True
 ```
 The above command will train the Sparse Autoencoder for 30 epochs to compress the 19D data and will make plots of the input and preprocessed data.
 
