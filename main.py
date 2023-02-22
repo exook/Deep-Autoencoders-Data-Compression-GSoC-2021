@@ -50,6 +50,10 @@ if __name__ == "__main__":
     # Preprocess data
     data_df, train_data, test_data, scaler = preprocess_28D(data_df=data_df, num_variables=num_of_variables, custom_norm=custom_norm)
 
+    print("\nNumber of input variables",len(list(data_df.columns)))
+    print("List of input variables",list(data_df.columns))
+    print("\n")
+
     # Run the Sparse Autoencoder and obtain the reconstructed data
     test_data, reconstructed_data = sae.train(variables=num_of_variables, train_data=train_data,
                                                   test_data=test_data, learning_rate=lr, reg_param=reg_param, epochs=epochs, RHO=RHO, l1=l1)
