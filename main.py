@@ -7,7 +7,8 @@ from evaluate import evaluate_model
 import pandas as pd
 import argparse
 from data_loader import load_cms_data
-
+import sys
+import pickle
 
 if __name__ == "__main__":
     # constructing argument parsers
@@ -29,8 +30,9 @@ if __name__ == "__main__":
                     help='Whether to use L1 loss or KL-divergence in the Sparse AE')
     ap.add_argument('-p', '--plot', type=bool, default=False,
                     help='Whether to make plots')
-
-    args = vars(ap.parse_args())
+    ap.add_argument('-mode', '--mode')
+                    
+    args = vars(ap.parse_args()) 
     epochs = args['epochs']
     use_vae = args['use_vae']
     use_sae = args['use_sae']
@@ -38,26 +40,40 @@ if __name__ == "__main__":
     num_of_variables = args['num_variables']
     create_plots = args['plot']
     l1 = args['l1']
-    reg_param = 0.001
-    # sparsity parameter for KL loss in SAE
-    RHO = 0.05
-    # learning rate
-    lr = 0.001
+    mode = args["mode"]
+    
+    if mode == "train":
+        reg_param = 0.001
+        # sparsity parameter for KL loss in SAE
+        RHO = 0.05
+        # learning rate
+        lr = 0.001
 
-    cms_data_df = load_cms_data(filename="open_cms_data.root")
-    data_df = pd.read_csv('27D_openCMS_data.csv')
+        cms_data_df = load_cms_data(filename="open_cms_data.root")
+        data_df = pd.read_csv('27D_openCMS_data.csv')
 
-    # Preprocess data
-    data_df, train_data, test_data, scaler = preprocess_28D(data_df=data_df, num_variables=num_of_variables, custom_norm=custom_norm)
+        # Preprocess data
+        data_df, train_data, test_data, scaler = preprocess_28D(data_df=data_df, num_variables=num_of_variables, custom_norm=custom_norm)
 
-    print("\nNumber of input variables",len(list(data_df.columns)))
-    print("List of input variables",list(data_df.columns))
-    print("\n")
+        print("\nNumber of input variables",len(list(data_df.columns)))
+        print("List of input variables",list(data_df.columns))
+        print("\n")
 
-    # Run the Sparse Autoencoder and obtain the reconstructed data
-    test_data, reconstructed_data = sae.train(variables=num_of_variables, train_data=train_data,
-                                                  test_data=test_data, learning_rate=lr, reg_param=reg_param, epochs=epochs, RHO=RHO, l1=l1)
-    # Plot the reconstructed along with the initial data
-    plot_test_pred_data(test_data, reconstructed_data, num_variables=num_of_variables, sae=True)
-    # Evaluate the reconstructions of the network based on various metrics
-    evaluate_model(y_true=test_data, y_predicted=reconstructed_data)
+        # Run the Sparse Autoencoder and obtain the reconstructed data
+        test_data, reconstructed_data = sae.train(variables=num_of_variables, train_data=train_data,
+                                                      test_data=test_data, learning_rate=lr, reg_param=reg_param, epochs=epochs, RHO=RHO, l1=l1)
+
+        with open("test_data.pickle", "wb") as handle:
+            pickle.dump(test_data, handle)      
+        with open("reconstructed_data.pickle", "wb") as handle:
+            pickle.dump(reconstructed_data, handle)                                                           
+    elif mode == "plot":
+        with open("test_data.pickle", 'rb') as handle:
+            test_data = pickle.load(handle)
+        with open("reconstructed_data.pickle", 'rb') as handle:
+            reconstructed_data = pickle.load(handle)
+            
+        # Plot the reconstructed along with the initial data
+        plot_test_pred_data(test_data, reconstructed_data, num_variables=num_of_variables, sae=True)
+        # Evaluate the reconstructions of the network based on various metrics
+        #evaluate_model(y_true=test_data, y_predicted=reconstructed_data)
