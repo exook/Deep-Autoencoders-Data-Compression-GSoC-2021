@@ -198,14 +198,14 @@ def plot_response(df_test,df_predicted,variable_list):
             response_RMS = RMS_function(response_norm=response_list)
 
             counts_before, bins_before = np.histogram(
-                before[column], bins=np.linspace(0, 1,101)
+                before[column], bins=np.linspace(0, 1,201)
             )
             hist_before = ax1.hist(
                 bins_before[:-1], bins_before, weights=counts_before, label="Before",linewidth=0.0
             )
             # counts_after, bins_after = np.histogram(after[column],bins=np.arange(minimum,maximum,step))
             counts_after, bins_after = np.histogram(
-                after[column], bins=np.linspace(0, 1,101)
+                after[column], bins=np.linspace(0, 1,201)
             )
             hist_after = ax1.hist(
                 bins_after[:-1],

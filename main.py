@@ -10,6 +10,8 @@ from data_loader import load_cms_data
 import sys
 import pickle
 
+from sklearn.model_selection import train_test_split
+
 if __name__ == "__main__":
     # constructing argument parsers
     ap = argparse.ArgumentParser()
@@ -49,11 +51,15 @@ if __name__ == "__main__":
         # learning rate
         lr = 0.001
 
-        cms_data_df = load_cms_data(filename="open_cms_data.root")
-        data_df = pd.read_csv('27D_openCMS_data.csv')
+        #cms_data_df = load_cms_data(filename="open_cms_data.root")
+        #data_df = pd.read_csv('27D_openCMS_data.csv')
 
         # Preprocess data
-        data_df, train_data, test_data, scaler = preprocess_28D(data_df=data_df, num_variables=num_of_variables, custom_norm=custom_norm)
+        #data_df, train_data, test_data, scaler = preprocess_28D(data_df=data_df, num_variables=num_of_variables, custom_norm=custom_norm)
+        
+        data_df = pd.read_csv('george.csv')
+        data_df.drop(columns=data_df.columns[0], axis=1, inplace=True)
+        train_data, test_data = train_test_split(data_df, test_size=0.15, random_state=1)
 
         print("\nNumber of input variables",len(list(data_df.columns)))
         print("List of input variables",list(data_df.columns))
