@@ -201,7 +201,7 @@ def plot_response(df_test,df_predicted,variable_list):
                 before[column], bins=np.linspace(0, 1,101)
             )
             hist_before = ax1.hist(
-                bins_before[:-1], bins_before, weights=counts_before, label="Before"
+                bins_before[:-1], bins_before, weights=counts_before, label="Before",linewidth=0.0
             )
             # counts_after, bins_after = np.histogram(after[column],bins=np.arange(minimum,maximum,step))
             counts_after, bins_after = np.histogram(
@@ -213,6 +213,7 @@ def plot_response(df_test,df_predicted,variable_list):
                 weights=counts_after,
                 label="After",
                 histtype="step",
+                linewidth=1
             )
             ax1.set_title(f"{column} Distribution")
             ax1.set_xlabel("column", ha="right", x=1.0)
@@ -230,30 +231,32 @@ def plot_response(df_test,df_predicted,variable_list):
             ax3.set_ylim(-200, 200)
             ax3.set_ylabel("Residual")
             counts_response, bins_response = np.histogram(
-                response[column], bins=np.arange(-2, 2, 0.1)
+                response[column], bins=np.arange(-2, 2, 0.01)
             )
             ax2.hist(
                 bins_response[:-1],
                 bins_response,
                 weights=counts_response,
                 label="Response",
+                linewidth=0.0
             )
             ax2.axvline(
                 np.mean(response_list),
                 color="k",
                 linestyle="dashed",
                 linewidth=1,
-                label=f"Mean {round(np.mean(response_list),8)}",
+                label=f"Mean {round(np.mean(response_list),4)}",
             )
-            ax2.plot([], [], " ", label=f"RMS: {round(response_RMS,8)}")
+            #ax2.plot([], [], " ", label=f"RMS: {round(response_RMS,8)}")
 
             # To have percent on the x-axis
             # formatter = mpl.ticker.FuncFormatter(to_percent)
             # ax2.xaxis.set_major_formatter(formatter)
+            legend2 = ax2.legend(ncol=1, frameon=True,facecolor="white",framealpha=0.2,fontsize='small')
+            legend2.set_title(f"RMS: {round(response_RMS,4)}")
             ax2.set_title(f"{column} Response")
             ax2.set_xlabel(f"{column} Response", ha="right", x=1.0)
             ax2.set_ylabel("Counts", ha="right", y=1.0)
-            ax2.legend(loc="best")
 
             pdf.savefig()
             ax2.clear()
